@@ -51,7 +51,11 @@ esphome:
 
             // Update nbs_time and text entity from persisted global
             if (!id(g_timezone).empty()) {
+              // ESPHome 2026.9.0 removed set_timezone(): the timezone now comes from the
+              // `time:` config or, with Home Assistant, is pushed by HA itself.
+              #if ESPHOME_VERSION_CODE < VERSION_CODE(2026, 9, 0)
               id(nbs_time).set_timezone(id(g_timezone).c_str());
+              #endif
               id(timezone_text).publish_state(id(g_timezone).c_str());
               ESP_LOGI("timezone", "Restored timezone: %s", id(g_timezone).c_str());
             }
@@ -599,7 +603,11 @@ text:
       lambda: !lambda |-
         id(timezone_text).publish_state(x.c_str()); // update this text component
         id(g_timezone) = std::string(x.c_str()); // store tz in global
+        // ESPHome 2026.9.0 removed set_timezone(): the timezone now comes from the
+        // `time:` config or, with Home Assistant, is pushed by HA itself.
+        #if ESPHOME_VERSION_CODE < VERSION_CODE(2026, 9, 0)
         id(nbs_time).set_timezone(x.c_str()); // set timezone for time
+        #endif
         ESP_LOGI("timezone", "Timezone set to: %s", x.c_str()); // log
 
 
