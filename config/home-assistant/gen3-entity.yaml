@@ -6,6 +6,8 @@
         {% set error_state = states('sensor.' ~ robot_id ~ '_robot_error') %}
         {% if '200' not in error_state %}
             error
+        {% elif 'DOCKINGRUNNING' in ui_state %}
+            returning
         {% elif is_state('binary_sensor.' ~ robot_id ~ '_ext_power_present', 'on') %}
             docked
         {% elif 'STATE_IDLE' or 'STATE_STANDBY' in ui_state %}
@@ -14,8 +16,6 @@
             cleaning
         {% elif 'PAUSED' in ui_state %}
             paused
-        {% elif 'DOCKINGRUNNING' in ui_state %}
-            returning
         {% else %}
             error
         {% endif %}"
